@@ -11,20 +11,23 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
 /**
- * Utility class for generating and validating JWT tokens.
+ * Utility class responsible ONLY for JWT operations.
  */
 @Component
 public class JwtUtil {
 
+    // Secret injected from application properties / env variable
     @Value("${jwt.secret}")
     private String secret;
 
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60; // 1 hour
+    // Token validity: 1 hour
+    private static final long EXPIRATION_TIME = 60 * 60 * 1000;
 
     /**
-     * Generate JWT token using username.
+     * Generates JWT token using username as subject.
      */
     public String generateToken(String username) {
+
         SecretKey key = Keys.hmacShaKeyFor(secret.getBytes());
 
         return Jwts.builder()
@@ -36,9 +39,10 @@ public class JwtUtil {
     }
 
     /**
-     * Extract username from token.
+     * Extracts username from JWT token.
      */
     public String extractUsername(String token) {
+
         SecretKey key = Keys.hmacShaKeyFor(secret.getBytes());
 
         return Jwts.parser()
