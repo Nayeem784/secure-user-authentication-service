@@ -1,20 +1,13 @@
 package com.logicoy.auth.dto;
 
 /**
- * Login response payload.
+ * DTO sent back to client after successful login.
+ * Contains JWT token and user identifier.
  */
 public class LoginResponseDto {
 
-    private String jwt;
     private Long id;
-
-    public String getJwt() {
-        return jwt;
-    }
-
-    public void setJwt(String jwt) {
-        this.jwt = jwt;
-    }
+    private String jwt;
 
     public Long getId() {
         return id;
@@ -22,5 +15,13 @@ public class LoginResponseDto {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getJwt() {
+        return jwt;
+    }
+
+    public void setJwt(String jwt) {
+        this.jwt = jwt;
     }
 }

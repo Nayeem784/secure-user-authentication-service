@@ -1,46 +1,54 @@
 package com.logicoy.auth.service;
 
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.logicoy.auth.dto.LoginRequestDto;
 import com.logicoy.auth.dto.LoginResponseDto;
 import com.logicoy.auth.entity.User;
+import com.logicoy.auth.security.JwtUtil;
 
 /**
- * Handles authentication logic.
+ * Service that handles authentication logic.
  */
 @Service
 public class AuthService {
 
     private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
 
-    // Constructor injection (mandatory)
-    public AuthService(AuthenticationManager authenticationManager) {
+    // Constructor injection
+    public AuthService(AuthenticationManager authenticationManager,
+                       JwtUtil jwtUtil) {
         this.authenticationManager = authenticationManager;
+        this.jwtUtil = jwtUtil;
     }
 
     /**
-     * Authenticates user credentials.
-     * JWT generation will be added next.
+     * Authenticates user credentials and returns JWT.
      */
-    public LoginResponseDto login(LoginRequestDto loginRequest) {
+    public LoginResponseDto login(LoginRequestDto request) {
 
+        // Step 1: Authenticate username & password
         Authentication authentication =
                 authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(
-                                loginRequest.getUsername(),
-                                loginRequest.getPassword()
+                                request.getUsername(),
+                                request.getPassword()
                         )
                 );
 
+        // Step 2: Get authenticated user
         User user = (User) authentication.getPrincipal();
 
-        // Temporary response (JWT will be added next)
+        // Step 3: Generate JWT
+        String token = jwtUtil.generateToken(user.getUsername());
+
+        // Step 4: Prepare response
         LoginResponseDto response = new LoginResponseDto();
         response.setId(user.getId());
+        response.setJwt(token);
 
         return response;
     }
